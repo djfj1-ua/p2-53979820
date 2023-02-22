@@ -101,9 +101,21 @@ void datosJug(Player &jug){
 
 }
 
-bool comprobarObstaculos(Level nivel,int tam, int &j){
+void mostrarNivel(vector<Level> niveles){
 
-    //int i = 0;
+    for(int i = 0; i < (int)niveles.size(); i++){
+
+        cout << "Nivel " << i+1 << ":" << endl;
+        cout << "Id: " << niveles[i].id << endl;
+        cout << "numObstaculos: " << niveles[i].numObstacles << endl;
+        cout << "Size: " << niveles[i].size << endl;
+
+
+    }
+
+}
+
+bool comprobarObstaculos(Level nivel,int tam, int &j){
 
     if(tam < j){
 
@@ -113,21 +125,39 @@ bool comprobarObstaculos(Level nivel,int tam, int &j){
 
     }
 
-    for(int i = 0; i < tam - 1; i++){
+    cout << "Tamaño: " << tam << endl;
 
-        if(nivel.obstacles[i].column > tam-1 || nivel.obstacles[i].row > tam-1){
+    for(int i = 0; i < j; i++){
+        cout << "Columna: " << nivel.obstacles[i].column << "J: " << j << endl;
+        if((nivel.obstacles[i].column > tam-1 || nivel.obstacles[i].row > tam-1) 
+        /*|| (nivel.obstacles[i].column == 0 && nivel.obstacles[i].row == tam-1) 
+        || (nivel.obstacles[i].column == tam-1 && nivel.obstacles[i].row == 0)*/){
 
-            cout << "Entro" << endl;
+            cout << 111111111 << endl;
             error(ERR_COORDINATE);
             return false;
 
         }
 
-        /*for(int x = 0; x < tam - 1; x++){
+        for(int j = i + 1; j < tam; j++){
 
-            
+            if(nivel.obstacles[i].column == nivel.obstacles[j].column && nivel.obstacles[i].row == nivel.obstacles[j].row){
 
-        }*/
+                cout << 222222222 << endl;
+                error(ERR_COORDINATE);
+                return false;
+
+            }
+
+            /*if(abs(nivel.obstacles[i].column - nivel.obstacles[j].column) <= 1 && abs(nivel.obstacles[i].row - nivel.obstacles[j].row) <= 1){
+
+                cout << 333333333 << endl;
+                error(ERR_COORDINATE);
+                return false;
+
+            }*/
+
+        }
 
     }
 
@@ -135,10 +165,10 @@ bool comprobarObstaculos(Level nivel,int tam, int &j){
 
 }
 
-void obstaculos(Level &nivel, int nobs){
+void obstaculos(Level &nivel, int nObs){
 
     int vObstaculos[3] = {5,10,20};
-    int nObstaculos = vObstaculos[nobs-1];
+    int nObstaculos = vObstaculos[nObs-1];
 
     bool obsOk = false;
 
@@ -152,8 +182,6 @@ void obstaculos(Level &nivel, int nobs){
         getline(cin,obs);
 
         i = 0;
-
-        cout << "Tamaño: " << obs.size() << endl;
 
         while(i < (int)obs.size() || obsOk == true){
 
@@ -177,13 +205,10 @@ void obstaculos(Level &nivel, int nobs){
             nivel.obstacles[j].column = columna;
 
             j++;
-            cout << "J1: " << j << endl;
-
-            obsOk = comprobarObstaculos(nivel,nObstaculos,j);
-
-            cout << "J2: " << j << endl;
 
         }
+
+        obsOk = comprobarObstaculos(nivel,nObstaculos,j);
 
     }while(obsOk == false);
 
@@ -191,23 +216,11 @@ void obstaculos(Level &nivel, int nobs){
 
 }
 
-void mostrarNivel(vector<Level> niveles){
-
-    for(int i = 0; i < (int)niveles.size(); i++){
-
-        cout << "Nivel " << i+1 << ":" << endl;
-        cout << "Id: " << niveles[i].id << endl;
-        cout << "numObstaculos: " << niveles[i].numObstacles << endl;
-        cout << "Size: " << niveles[i].size << endl;
-
-
-    }
-
-}
-
-void crearNivel(Player jug,vector<Level> &niveles,int id){
+void crearNivel(Player jug,vector<Level> &niveles,int &id){
 
     int tam[3] = {5,7,10};
+
+    id++;
 
     Level nivel;
     nivel.id = id;
@@ -247,7 +260,6 @@ int main(){
 
                 if(niveles.size() < 10){
                     
-                    id++;
                     crearNivel(jug,niveles,id);
 
                 }else{
