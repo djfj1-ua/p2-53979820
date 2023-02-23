@@ -137,12 +137,12 @@ bool comprobarObstaculos(vector<Coordinate> &coordenada,int tam, int &j){
     for(int i = 0; i < (int)coordenada.size(); i++){
         
         if((coordenada[i].column > tam-1 || coordenada[i].row > tam-1) 
-        /*|| (coordenada.column == 0 && coordenada.row == tam-1) 
-        || (coordenada.obstacles[i].column == tam-1 && coordenada.row == 0)*/){
+        || (coordenada[i].column == 0 && coordenada[i].row == tam-1) 
+        || (coordenada[i].column == tam-1 && coordenada[i].row == 0)){
 
             cout << 111111111 << endl;
-            j = 0;
             error(ERR_COORDINATE);
+            j = 0;
             return false;
 
         }
@@ -152,29 +152,20 @@ bool comprobarObstaculos(vector<Coordinate> &coordenada,int tam, int &j){
             if(coordenada[i].column == coordenada[k].column && coordenada[i].row == coordenada[k].row){
                 cout << "Columna: " << coordenada[i].column << "J: " << j << endl;
                 cout << 222222222 << endl;
-                j = 0;
-                error(ERR_COORDINATE);
-                return false;
-
-            }
-
-            if(pow((coordenada[i].column - coordenada[k].column),2) + pow((coordenada[i].row - coordenada[k].row),2) <= 2){
-
-                cout << 333333333 << endl;
                 error(ERR_COORDINATE);
                 j = 0;
                 return false;
 
             }
 
-            /*if(abs(coordenada[i].column - coordenada[k].column) + abs(coordenada[i].row - coordenada[k].row) <= 2){
-
+            if ((pow((coordenada[i].column - coordenada[k].column),2) + pow((coordenada[i].row - coordenada[k].row),2)) <= 2){
+                
                 cout << 333333333 << endl;
                 error(ERR_COORDINATE);
                 j = 0;
                 return false;
 
-            }*/
+            }
 
         }
 
@@ -189,32 +180,45 @@ void obstaculos(Level &nivel, int nObs){
     int vObstaculos[3] = {5,10,20};
     int nObstaculos = vObstaculos[nObs-1];
 
-    vector<Coordinate> temp;
+    // vector<Coordinate> temp;
     Coordinate aux;
 
     bool obsOk = true;
 
+    bool new_try = true;
+
     int i = 0,j = 0;
 
-    string obs = "";
+    // string obs = "";
 
     do{
 
         cout << "Obstaculos: " << endl;
+
+        vector<Coordinate> temp;
+
+        string obs = "";
+
         getline(cin,obs);
 
         i = 0;
 
-        while(i < (int)obs.size() && obsOk == true){
+        // cout << "Size: " << (int)obs.size() << endl;
+
+        while(i < (int)obs.size() && (obsOk == true || new_try == true)){
+            
+            // cout << "i: " << i << ", obsOk: " << obsOk << ", new_try: " << new_try << endl;
+
+            new_try = false;
 
             int fila = obs[i] - '0';
-            //cout << "Fila: " << fila << endl;
+            // cout << "Fila: " << fila << endl;
 
             i++;
             i++;
 
             int columna = obs[i] - '0';
-            //cout << "Columna: " << columna << endl;
+            // cout << "Columna: " << columna << endl;
 
             if(i < (int)obs.size()){
 
@@ -233,7 +237,13 @@ void obstaculos(Level &nivel, int nObs){
             j++;
 
             obsOk = comprobarObstaculos(temp,nObstaculos,j);
+
+            cout << "obsOk: " << obsOk << endl;
+
         }
+
+        new_try = true;
+
 
     }while(obsOk == false);
 
