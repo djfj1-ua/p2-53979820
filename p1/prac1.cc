@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -115,7 +116,13 @@ void mostrarNivel(vector<Level> niveles){
 
 }
 
-bool comprobarObstaculos(Level nivel,int tam, int &j){
+bool comprobarObstaculos(vector<Coordinate> &coordenada,int tam, int &j){
+
+    for(int i = 0; i < (int)coordenada.size(); i++){
+
+        cout << "Columna: " << coordenada[i].column << "  Fila: " << coordenada[i].row << endl;
+
+    }
 
     if(tam < j){
 
@@ -127,32 +134,44 @@ bool comprobarObstaculos(Level nivel,int tam, int &j){
 
     cout << "Tamaño: " << tam << endl;
 
-    for(int i = 0; i < j; i++){
-        cout << "Columna: " << nivel.obstacles[i].column << "J: " << j << endl;
-        if((nivel.obstacles[i].column > tam-1 || nivel.obstacles[i].row > tam-1) 
-        /*|| (nivel.obstacles[i].column == 0 && nivel.obstacles[i].row == tam-1) 
-        || (nivel.obstacles[i].column == tam-1 && nivel.obstacles[i].row == 0)*/){
+    for(int i = 0; i < (int)coordenada.size(); i++){
+        
+        if((coordenada[i].column > tam-1 || coordenada[i].row > tam-1) 
+        /*|| (coordenada.column == 0 && coordenada.row == tam-1) 
+        || (coordenada.obstacles[i].column == tam-1 && coordenada.row == 0)*/){
 
             cout << 111111111 << endl;
+            j = 0;
             error(ERR_COORDINATE);
             return false;
 
         }
 
-        for(int j = i + 1; j < tam; j++){
+        for(int k = i + 1; k < (int)coordenada.size(); k++){
 
-            if(nivel.obstacles[i].column == nivel.obstacles[j].column && nivel.obstacles[i].row == nivel.obstacles[j].row){
-
+            if(coordenada[i].column == coordenada[k].column && coordenada[i].row == coordenada[k].row){
+                cout << "Columna: " << coordenada[i].column << "J: " << j << endl;
                 cout << 222222222 << endl;
+                j = 0;
                 error(ERR_COORDINATE);
                 return false;
 
             }
 
-            /*if(abs(nivel.obstacles[i].column - nivel.obstacles[j].column) <= 1 && abs(nivel.obstacles[i].row - nivel.obstacles[j].row) <= 1){
+            if(pow((coordenada[i].column - coordenada[k].column),2) + pow((coordenada[i].row - coordenada[k].row),2) <= 2){
 
                 cout << 333333333 << endl;
                 error(ERR_COORDINATE);
+                j = 0;
+                return false;
+
+            }
+
+            /*if(abs(coordenada[i].column - coordenada[k].column) + abs(coordenada[i].row - coordenada[k].row) <= 2){
+
+                cout << 333333333 << endl;
+                error(ERR_COORDINATE);
+                j = 0;
                 return false;
 
             }*/
@@ -170,7 +189,10 @@ void obstaculos(Level &nivel, int nObs){
     int vObstaculos[3] = {5,10,20};
     int nObstaculos = vObstaculos[nObs-1];
 
-    bool obsOk = false;
+    vector<Coordinate> temp;
+    Coordinate aux;
+
+    bool obsOk = true;
 
     int i = 0,j = 0;
 
@@ -183,16 +205,16 @@ void obstaculos(Level &nivel, int nObs){
 
         i = 0;
 
-        while(i < (int)obs.size() || obsOk == true){
+        while(i < (int)obs.size() && obsOk == true){
 
             int fila = obs[i] - '0';
-            cout << "Fila: " << fila << endl;
+            //cout << "Fila: " << fila << endl;
 
             i++;
             i++;
 
             int columna = obs[i] - '0';
-            cout << "Columna: " << columna << endl;
+            //cout << "Columna: " << columna << endl;
 
             if(i < (int)obs.size()){
 
@@ -201,14 +223,17 @@ void obstaculos(Level &nivel, int nObs){
 
             }
 
-            nivel.obstacles[j].row = fila;
-            nivel.obstacles[j].column = columna;
+            aux.row = fila;
+            aux.column = columna;
+
+            temp.push_back(aux);
+
+            cout << "J: " << j << endl;
 
             j++;
 
+            obsOk = comprobarObstaculos(temp,nObstaculos,j);
         }
-
-        obsOk = comprobarObstaculos(nivel,nObstaculos,j);
 
     }while(obsOk == false);
 
