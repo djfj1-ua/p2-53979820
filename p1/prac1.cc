@@ -1,3 +1,5 @@
+//DNI 53979820Q Daniel Jenaro Fernández Juan
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -6,6 +8,7 @@ using namespace std;
 
 const int KNAME=40;
 const int KMAXOBSTACLES=20;
+const int KDIFFICULTY=20;
 
 enum Error{
     ERR_OPTION,
@@ -113,42 +116,56 @@ void inicializarVectorObstaculos(Coordinate obstaculos[KMAXOBSTACLES]){
 
 }
 
-void mostrarNivel(Level nivel, int tam, int id){
+void inicializarMatriz(char *matriz, int tam){
 
-    //char Matriz[tam][tam];
-
-    cout << "Level " << id << endl;
-
-    int k = 0;
-
-    for(int i = 0; i < tam; i++){
+    for(int i = 0; i < tam; i ++){
 
         for(int j = 0; j < tam; j++){
 
-            char letra = 'O';
+            matriz[i*tam+j] = 'O';
 
-            if(tam-1 == i && 0 == j){
+        }
 
-                letra = 'R';
+    }
+
+}
+
+void mostrarNivel(Level nivel, int startF, int startC){
+
+    char Matriz[nivel.size][nivel.size];
+
+    inicializarMatriz(&Matriz[0][0],nivel.size);
+
+    int k = 0;
+
+    for(int i = 0; i < nivel.size; i++){
+
+        for(int j = 0; j < nivel.size; j++){
+
+            if(startF == i && startC == j){
+
+                Matriz[i][j] = 'R';
                 
-            }else if(0 == i && tam-1 == j){
+            }else if(0 == i && nivel.size-1 == j){
 
-                letra = 'F';
+                Matriz[i][j] = 'F';
                 
             }
+
             k = 0;
+
             while(nivel.obstacles[k].column != -1 && nivel.obstacles[k].row != -1){
 
                 if(i == nivel.obstacles[k].row && j == nivel.obstacles[k].column){
 
-                    letra = 'X';
+                    Matriz[i][j] = 'X';
                     break;
 
                 }
                 k++;
             }
 
-            cout << letra;
+            cout << Matriz[i][j];
 
         }
 
@@ -157,13 +174,12 @@ void mostrarNivel(Level nivel, int tam, int id){
     }
 }
 
-void mostrarNiveles(vector<Level> niveles, int op, int id){
-
-    int tam[3] = {5,7,10};
+void mostrarNiveles(vector<Level> niveles, int op){
 
     for(int i = 0; i < (int)niveles.size(); i++){
 
-        mostrarNivel(niveles[i],tam[op-1],niveles[i].id);
+        cout << "Level " << niveles[i].id << endl;
+        mostrarNivel(niveles[i],niveles[i].start.row,niveles[i].start.column);
 
     }
 
@@ -228,13 +244,11 @@ void copiarVectorNivel(vector<Coordinate> temp, Level &nivel){
 
 }
 
-void obstaculos(Level &nivel, int nObs){
+void obstaculos(Level &nivel, int nObs, int tam){
 
     int vObstaculos[3] = {5,10,20};
     nivel.numObstacles = vObstaculos[nObs-1];
-    int tam[3] = {5,7,10};
 
-    // vector<Coordinate> temp;
     Coordinate aux;
 
     bool obsOk = true;
@@ -243,9 +257,9 @@ void obstaculos(Level &nivel, int nObs){
 
     int i = 0,j = 0;
 
-    // string obs = "";
-
     do{
+
+        obsOk = true;
 
         cout << "Obstacles: " << endl;
 
@@ -257,22 +271,16 @@ void obstaculos(Level &nivel, int nObs){
 
         i = 0;
 
-        // cout << "Size: " << (int)obs.size() << endl;
-
         while(i < (int)obs.size() && (obsOk == true || new_try == true)){
-            
-            // cout << "i: " << i << ", obsOk: " << obsOk << ", new_try: " << new_try << endl;
 
             new_try = false;
 
             int fila = obs[i] - '0';
-            // cout << "Fila: " << fila << endl;
 
             i++;
             i++;
 
             int columna = obs[i] - '0';
-            // cout << "Columna: " << columna << endl;
 
             if(i < (int)obs.size()){
 
@@ -288,7 +296,7 @@ void obstaculos(Level &nivel, int nObs){
 
             j++;
 
-            obsOk = comprobarObstaculos(temp,nivel.numObstacles,tam[nObs-1],j);
+            obsOk = comprobarObstaculos(temp,nivel.numObstacles,tam,j);
 
         }
 
@@ -302,29 +310,29 @@ void obstaculos(Level &nivel, int nObs){
 
 }
 
-void crearNivel(Player jug,vector<Level> &niveles,int &id){
-
-    int tam[3] = {5,7,10};
+void crearNivel(Player jug,vector<Level> &niveles,int &id, int tam){
 
     id++;
 
     Level nivel;
     nivel.id = id;
-    nivel.size = tam[jug.difficulty-1];
+    nivel.size = tam;
 
-    nivel.start.row = (tam[jug.difficulty] - 1);
+    nivel.start.row = (tam - 1);
     nivel.start.column = 0;
 
     nivel.finish.row = 0;
-    nivel.finish.column = (tam[jug.difficulty] - 1);
+    nivel.finish.column = (tam - 1);
 
     inicializarVectorObstaculos(nivel.obstacles);
     
-    obstaculos(nivel,jug.difficulty);
+    obstaculos(nivel,jug.difficulty,tam);
 
     niveles.push_back(nivel);
 
-    mostrarNivel(nivel,tam[jug.difficulty-1],id);
+    cout << "Level " << nivel.id << endl;
+
+    mostrarNivel(nivel,nivel.start.row,nivel.start.column);
 
 }
 
@@ -390,10 +398,188 @@ void borrarNivel(vector<Level> &niveles){
     }
 }
 
+bool comprobarInstruccion(string instruccion, Player &jug){
+
+    for(int i = 0; i < (int)instruccion.size(); i++){
+
+        instruccion[i] = toupper(instruccion[i]);
+
+        if(instruccion[i] != 'U' && instruccion[i] != 'D' 
+        && instruccion[i] != 'L' && instruccion[i] != 'R'){
+
+            return false;
+
+        }else{
+
+            return true;
+
+        }
+    }
+
+    return true;
+}
+
+bool comprobarMovimiento(Level &nivel, int fila, int columna, Player &jug, char instruccion){
+
+    if(fila < 0 || fila > nivel.size-1 || columna < 0 
+    || columna > nivel.size-1){
+
+        return false;
+
+    }else{
+
+        int i = 0;
+
+        while(nivel.obstacles[i].column != -1 && nivel.obstacles[i].row != -1){
+
+            if(nivel.obstacles[i].column == columna && nivel.obstacles[i].row == fila){
+
+                return false;
+
+            }
+
+            i++;
+
+        }
+
+    }
+
+    cout << "Instruction " << instruccion << endl;
+
+    return true;
+
+}
+
+bool movimiento(char instruccion, Level &nivel, Coordinate &robot, Player &jug){
+
+    bool aux = false;
+
+    instruccion = toupper(instruccion);
+
+    switch(instruccion){
+
+        case 'U': 
+            aux = comprobarMovimiento(nivel,robot.row-1,robot.column,jug,instruccion);
+            robot.row--;
+            break;
+        case 'D':
+            aux = comprobarMovimiento(nivel,robot.row+1,robot.column,jug,instruccion);
+            robot.row++;
+            break;
+        case 'L':
+            aux = comprobarMovimiento(nivel,robot.row,robot.column-1,jug,instruccion);
+            robot.column--;
+            break;
+        case 'R':
+            aux = comprobarMovimiento(nivel,robot.row,robot.column+1,jug,instruccion);
+            robot.column++;
+            break;
+
+    }
+
+    if(aux == true){
+
+        mostrarNivel(nivel,robot.row,robot.column);
+
+    }
+
+    return aux;
+
+}
+
+void jugar(vector<Level> &niveles, int tam, Player &jug){
+
+    int op = 0;
+    bool idOk = false;
+    bool instrOk = false;
+    bool aux = true;
+    int i = 0;
+    string sec = "";
+
+    Coordinate robot;
+
+    robot.column = 0;
+    robot.row = tam-1;
+
+    cout << "Id:" << endl;
+    cin >> op;
+    cin.get();
+
+    idOk = comprobarId(niveles,op);
+
+    if(idOk == true){
+
+        cout << "Level " << niveles[op-1].id << endl;
+
+        mostrarNivel(niveles[op-1],niveles[op-1].start.row,niveles[op-1].start.column);
+        cout << "Instructions: " << endl;
+
+        getline(cin,sec);
+
+        instrOk = comprobarInstruccion(sec,jug);
+
+        if(instrOk == true){
+
+            while(i < (int)sec.size() && aux == true){
+
+                aux = movimiento(sec[i],niveles[op-1],robot,jug);
+
+                i++;
+
+            }
+
+        }
+
+        if(aux == true && instrOk == true && niveles[op-1].finish.column == robot.column && niveles[op-1].finish.row == robot.row){
+
+            jug.score = 3*(niveles[op-1].size-1)-(int)sec.size();
+            jug.wins++;
+
+            if(jug.score < 0){
+
+                jug.score = 0;
+                
+            }
+
+            cout << "You win " << jug.score << " points" << endl;
+
+        }else{
+
+            error(ERR_INSTRUCTION);
+            jug.losses++;
+
+            cout << "You lose" << endl;
+
+        }
+
+    }else{
+
+        error(ERR_ID);
+
+    }
+
+}
+
+void mostrarResultado(Player jug, int partidas){
+
+    string difficulty[3] = {"Easy","Medium","Hard"};
+
+    cout << "[Report]" << endl;
+    cout << "Name: " << jug.name << endl;
+    cout << "Difficulty: " << difficulty[jug.difficulty-1] << endl;
+    cout << "Score: " << jug.score << endl;
+    cout << "Wins: " << jug.wins << endl;
+    cout << "Losses: " << jug.losses << endl;
+    cout << "Total: " << partidas << endl;
+
+}
+
 // Función principal (tendrás que añadirle más código tuyo)
 int main(){
     char option;
     int id = 0;
+    int tam[3] = {5,7,10};
+    int partidas = 0;
 
     Player jug;
     datosJug(jug);
@@ -410,7 +596,7 @@ int main(){
 
                 if(niveles.size() < 10){
                     
-                    crearNivel(jug,niveles,id);
+                    crearNivel(jug,niveles,id,tam[jug.difficulty-1]);
 
                 }else{
 
@@ -426,12 +612,19 @@ int main(){
                 break;
             case '3': // Llamar a la función para mostrar los niveles creados
                 
-                mostrarNiveles(niveles,jug.difficulty,id);
+                mostrarNiveles(niveles,jug.difficulty);
 
                 break;
             case '4': // Llamar a la función para jugar
+
+                jugar(niveles,tam[jug.difficulty-1],jug);
+                partidas++;
+
                 break;
             case '5': // Llamar a la función para mostrar información del jugador
+                
+                mostrarResultado(jug,partidas);
+                
                 break;
             case 'q': break;
             default: error(ERR_OPTION); // Muestra "ERROR: wrong option"
