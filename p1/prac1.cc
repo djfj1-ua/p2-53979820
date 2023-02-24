@@ -82,13 +82,16 @@ void datosJug(Player &jug){
     cout << "Name: " << endl;
     cin.getline(jug.name,49,'\n');
 
+    char caracter[40];
     int dif = 0;
 
     do{
 
         cout << "Difficulty: " << endl;
-        cin >> dif;
+        cin >> caracter;
         cin.get();
+
+        dif = atoi(caracter);
 
         if(dif < 1 || dif > 3){
 
