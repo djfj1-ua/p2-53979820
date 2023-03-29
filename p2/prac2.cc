@@ -262,21 +262,21 @@ void addSubscriber(Platform &platform){
 
 }
 
-bool comprobarId(int id,Platform plataforma){
+int comprobarId(int id, Platform plataforma){
 
   for(int i = 0; i < (int)plataforma.subscribers.size(); i++){
 
     if((int)plataforma.subscribers[i].id == id){
-      return true;
+      return i;
     }
 
   }
 
-  return false;
+  return -1;
 
 }
 
-bool  comprobarNum(int num[4]){
+bool comprobarNum(int num[4]){
 
   for(int i = 0; i < 4; i++){
     if(num[i] > 255 && num[i] < 0){
@@ -416,64 +416,134 @@ string calcularMain(vector<string> ips){
 
 }
 
-int addSubscriberIp(Platform &platform){
+void addSubscriberIp(Platform &platform){
 
-  int auxId = 0;
-  string auxIP;
-  bool idOk = false;
+  int auxId = -1;
+  string auxIP = "";
+  int idOk = 0;
   bool ipOk = false;
 
   cout << "Enter subscriber id: " << endl;
   cin >> auxId;
   idOk = comprobarId(auxId,platform);
 
-  if(idOk != true){
-    error(ERR_IP);
-    return 0;
+  if(idOk == -1){
+    error(ERR_ID);
+  }else{
+
+    do{
+
+      cout << "Enter IP:" << endl;
+      cin >> auxIP;
+
+      ipOk = comprobarIP(auxIP);
+
+      if(ipOk != true){
+        error(ERR_IP);
+      }
+
+    }while(ipOk != true);
+
+    platform.subscribers[idOk].ips.push_back(auxIP);
+
+    platform.subscribers[idOk].mainIp = calcularMain(platform.subscribers[idOk].ips);
+
+    cout << "MAIN: " << platform.subscribers[idOk].mainIp << endl;
+
   }
-
-  do{
-
-    cout << "Enter IP:" << endl;
-    cin >> auxIP;
-
-    ipOk = comprobarIP(auxIP);
-
-    if(ipOk != true){
-      error(ERR_IP);
-    }
-
-  }while(ipOk != true);
-
-  platform.subscribers[auxId].ips.push_back(auxIP);
-
-  platform.subscribers[auxId].mainIp = calcularMain(platform.subscribers[auxId].ips);
-
- return 0;
 }
 
-void deleteSubscriber(Platform &platform)
-{
+void deleteSubscriber(Platform &platform){
+
+  int idOk = -1;
+  int auxId = 0;
+
+  cout << "Enter subscriber id: " << endl;
+  cin >> auxId;
+  idOk = comprobarId(auxId,platform);
+
+  if(idOk == -1){
+
+    error(ERR_ID);
+
+  }else{
+
+    for(int i = 0; i < (int)platform.subscribers.size(); i++){
+
+      if(idOk == i){
+
+        platform.subscribers.erase(platform.subscribers.begin()+i);
+
+      }
+
+    }
+
+  }
+
 }
 
 void importFromCsv(Platform &platform)
 {
+  cout << "Import from csv" << endl;
 }
 
 void exportToCsv(const Platform &platform)
 {
+  cout << "Export from csv" << endl;
 }
 
 void loadData(Platform &platform)
 {
+  cout << "Load data" << endl;
 }
 
 void saveData(const Platform &platform)
 {
+  cout << "save data" << endl;
 }
 
-void importExportMenu(Platform &platform)
-{
+void showImportMenu(){
+
+  cout << "[Import/export options]" << endl
+    << "1- Import from CSV" << endl
+    << "2- Export to CSV" << endl
+    << "3- Load data" << endl
+    << "4- Save data" << endl
+    << "b- Back to main menu" << endl
+    << "Option: ";
+
+}
+
+void importExportMenu(Platform &platform){
+
+  char option;
+  do
+  {
+    showImportMenu();
+    cin >> option;
+    cin.get();
+
+    switch (option)
+    {
+    case '1':
+      importFromCsv(platform);
+      break;
+    case '2':
+      exportToCsv(platform);
+      break;
+    case '3':
+      loadData(platform);
+      break;
+    case '4':
+      saveData(platform);
+      break;
+    case 'b':
+      break;
+    default:
+      error(ERR_OPTION);
+    }
+  } while (option != 'b');
+
 }
 
 int main(int argc, char *argv[])
