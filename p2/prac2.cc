@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <string>
 
 using namespace std;
 
@@ -108,25 +109,20 @@ bool comprobarName(string name){
 
 bool comprobarParteEmail(string email2){
 
-  if(email2 == ""){
+  int n = email2.size();
 
+  if (n == 0 || email2[0] == '.' || email2[n - 1] == '.') {
     return false;
-
   }
 
-  for (int i = 0; i < (int)email2.size(); i++){
+  for (int i = 0; i < n; i++) {
 
-    if (email2[0] == '.' || email2[email2.size() - 1] == '.'){
+    char c = email2[i];
+
+    if (!isalnum(c) && c != '.' && c != '_') {
       return false;
-
-    }else if ((toupper(email2[i]) < 'A' && toupper(email2[i]) > 'Z') /*|| email2[i] != '.' || email2[i] != '_' || (email2[i] < '0' && email2[i] > '9')*/){
-      return false;
-
-    }else{
-
-      return true;
-
     }
+
   }
 
   return true;
@@ -140,12 +136,9 @@ int encontrarArroba(string email, int &pos){
   for(int i = 0; i < (int)email.size(); i++){
 
     if(email[i] == '@'){
-
       veces++;
       pos = i;
-
     }
-
   }
 
   return veces;
@@ -201,9 +194,7 @@ void mostrarSuscriptores(Subscriber suscriptor){
     cout << suscriptor.ips[j];
 
     if(j < (int)suscriptor.ips.size()-1){
-
       cout << "|";
-
     }
   }
 
@@ -214,9 +205,7 @@ void mostrarSuscriptores(Subscriber suscriptor){
 void showSubscribers(const Platform &platform){
 
   for(int i = 0; i < (int)platform.subscribers.size(); i++){
-
     mostrarSuscriptores(platform.subscribers[i]);
-
   }
 
 }
@@ -230,7 +219,9 @@ void addSubscriber(Platform &platform){
 
     cout << "Enter name: " << endl;
     getline(cin,nameAux);
+
     nameOk = comprobarName(nameAux);
+
     if(!nameOk){error(ERR_NAME);}
 
   }while(nameOk == false);
@@ -243,6 +234,7 @@ void addSubscriber(Platform &platform){
     cout << "Enter email: " << endl;
     getline(cin,emailAux);
     emailOk = comprobarEmail(emailAux);
+
     if(!emailOk){error(ERR_EMAIL);}
 
   } while(emailOk == false);
@@ -554,7 +546,6 @@ void loadData(Platform &platform){
   if(op == "Y" || op == "y"){
 
     borrarPlataforma(platform);
-    string plataforma;
 
     cout << "Enter filename: " << endl;
     cin >> nomFich;
@@ -564,18 +555,76 @@ void loadData(Platform &platform){
     fich.open(nomFich,ios::binary);
 
     if(fich.is_open()){
-      //Investigar ficheros binarios
+      
+      BinPlatform binPlatform;
+
+      fich.read((char*)&binPlatform,sizeof(BinPlatform));
+
+      platform.name = binPlatform.name;
+      platform.nextId = binPlatform.nextId;
+
+      while(fich.peek() != EOF){
+        BinSubscriber binSuscriber;
+        fich.read((char*)&binSuscriber,sizeof(BinSubscriber));
+
+        Subscriber suscriptor;
+
+        suscriptor.email = binSuscriber.email;
+        suscriptor.name = binSuscriber.name;
+        suscriptor.id = binSuscriber.id;
+        suscriptor.mainIp = binSuscriber.mainIp;
+        suscriptor.ips.push_back(binSuscriber.mainIp);
+
+        platform.subscribers.push_back(suscriptor);
+      }
+      
     }else{error(ERR_FILE);}
 
     fich.close();
     
   }
-  
 }
 
-void saveData(const Platform &platform)
-{
-  cout << "save data" << endl;
+void saveData(const Platform &platform){
+
+  string nomFich;
+
+  cout << "Enter filename: " << endl;
+  cin >> nomFich;
+
+  ofstream fich;
+
+  fich.open(nomFich,ios::binary);
+
+  if(!fich.is_open()){
+
+    error(ERR_FILE);
+    return;
+
+  }
+      
+  BinPlatform binPlatform;
+
+  strncpy(binPlatform.name,platform.name.c_str(),KMAXSTRING-1);
+  binPlatform.nextId = platform.nextId;
+
+  fich.write((char*)&binPlatform,sizeof(BinPlatform));
+
+  for(int i = 0; i < (int)platform.subscribers.size(); i++){
+
+    BinSubscriber binSuscriptor;
+
+    strncpy(binSuscriptor.name,platform.subscribers[i].name.c_str(),KMAXSTRING-1);
+    strncpy(binSuscriptor.email,platform.subscribers[i].email.c_str(),KMAXSTRING-1);
+    binSuscriptor.id = platform.subscribers[i].id;
+    strcpy(binSuscriptor.mainIp,platform.subscribers[i].mainIp.c_str());
+
+    fich.write((char*)&binSuscriptor,sizeof(BinSubscriber));
+    
+  }
+
+  fich.close();
+  
 }
 
 void showImportMenu(){
@@ -631,21 +680,21 @@ void argumentos(Platform &platform, int argc, char *argv[]){
 
   if(argc == 3){
 
-    if(strcmp(argv[1], "-i") == 0){
+    if(strcmp(argv[1], "-l") == 0){
+
+      loadData(platform);
+
+    }else if(strcmp(argv[1], "-i") == 0){
 
       importFromCsv(platform,argv[2]);
-
-    }else if(strcmp(argv[1], "-l") == 0){
-
-      cout << "Binario" << endl;
 
     }else{error(ERR_ARGS);cout << "1" << endl;}
 
   }else if(argc == 5){
 
-    if(strcmp(argv[1], "-i") == 0){
+    if(strcmp(argv[1], "-l") == 0){
 
-      importFromCsv(platform,argv[2]);
+      loadData(platform);
 
       if(strcmp(argv[3], "-i") == 0){
 
@@ -653,13 +702,23 @@ void argumentos(Platform &platform, int argc, char *argv[]){
 
       }else if(strcmp(argv[1], "-l") == 0){
 
-        cout << "Binario" << endl;
+        loadData(platform);
 
       }else{error(ERR_ARGS);cout << "2" << endl;}
 
-    }else if(strcmp(argv[1], "-l") == 0){
+    }else if(strcmp(argv[1], "-i") == 0){
 
-      cout << "Binario" << endl;
+      if(strcmp(argv[3], "-i") == 0){
+
+        importFromCsv(platform,argv[2]);
+        importFromCsv(platform,argv[4]);
+
+      }else if(strcmp(argv[3], "-l") == 0){
+
+        loadData(platform);
+        importFromCsv(platform,argv[4]);
+
+      }else{error(ERR_ARGS);cout << "2" << endl;}
 
     }else{error(ERR_ARGS);cout << "3" << endl;}
 
