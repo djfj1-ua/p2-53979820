@@ -676,19 +676,21 @@ void importExportMenu(Platform &platform){
 
 }
 
-void argumentos(Platform &platform, int argc, char *argv[]){
+bool argumentos(Platform &platform, int argc, char *argv[]){
 
   if(argc == 3){
 
     if(strcmp(argv[1], "-l") == 0){
 
       loadData(platform);
+      return true;
 
     }else if(strcmp(argv[1], "-i") == 0){
 
       importFromCsv(platform,argv[2]);
+      return true;
 
-    }else{error(ERR_ARGS);cout << "1" << endl;}
+    }else{error(ERR_ARGS);}
 
   }else if(argc == 5){
 
@@ -699,12 +701,14 @@ void argumentos(Platform &platform, int argc, char *argv[]){
       if(strcmp(argv[3], "-i") == 0){
 
         importFromCsv(platform,argv[4]);
+        return true;
 
       }else if(strcmp(argv[1], "-l") == 0){
 
         loadData(platform);
+        return true;
 
-      }else{error(ERR_ARGS);cout << "2" << endl;}
+      }else{error(ERR_ARGS);}
 
     }else if(strcmp(argv[1], "-i") == 0){
 
@@ -712,17 +716,21 @@ void argumentos(Platform &platform, int argc, char *argv[]){
 
         importFromCsv(platform,argv[2]);
         importFromCsv(platform,argv[4]);
+        return true;
 
       }else if(strcmp(argv[3], "-l") == 0){
 
         loadData(platform);
         importFromCsv(platform,argv[4]);
+        return true;
 
-      }else{error(ERR_ARGS);cout << "2" << endl;}
+      }else{error(ERR_ARGS);}
 
-    }else{error(ERR_ARGS);cout << "3" << endl;}
+    }else{error(ERR_ARGS);}
 
-  }else{error(ERR_ARGS);cout << "4" << endl;}
+  }else{error(ERR_ARGS);}
+
+  return false;
 
 }
 
@@ -732,10 +740,15 @@ int main(int argc, char *argv[])
   Platform platform;
   platform.name = "Streamflix";
   platform.nextId = 0;
+  bool arg = false;
 
   if(argc > 1){
 
-    argumentos(platform,argc,argv);
+    arg = argumentos(platform,argc,argv);
+
+    if(arg == false){
+      return 0;
+    }
 
   }
     
