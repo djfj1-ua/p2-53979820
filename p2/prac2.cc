@@ -1,5 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <sstream>
+#include <fstream>
+#include <cstring>
 
 using namespace std;
 
@@ -91,13 +94,11 @@ bool comprobarName(string name){
 
   for (int i = 0; i < (int)name.size(); i++){
     if (name[i] == ':'){
-      error(ERR_NAME);
       return false;
     }
   }
 
   if (name.size() < 3){
-    error(ERR_NAME);
     return false;
   }
 
@@ -179,7 +180,6 @@ bool comprobarEmail(string email){
   vecesArroba = encontrarArroba(email,posArroba);
 
   if(vecesArroba != 1){
-    error(ERR_EMAIL);
     return false;
   }else{
     part1 = email.substr(0,posArroba);
@@ -189,15 +189,8 @@ bool comprobarEmail(string email){
   if(comprobarParteEmail(part1) == true && comprobarParteEmail(part2) == true && comprobarParteAtras(part2) == true){
     return true;
   }else{
-    error(ERR_EMAIL);
     return false;
   }
-}
-
-void mostrarIP(string ips){
-
-  cout << "|" << ips;
-  
 }
 
 void mostrarSuscriptores(Subscriber suscriptor){
@@ -205,9 +198,13 @@ void mostrarSuscriptores(Subscriber suscriptor){
   cout << suscriptor.id << ":" << suscriptor.name << ":" << suscriptor.email << ":" << suscriptor.mainIp << ":";
 
   for(int j = 0; j < (int)suscriptor.ips.size(); j++){
+    cout << suscriptor.ips[j];
 
-    mostrarIP(suscriptor.ips[j]);
+    if(j < (int)suscriptor.ips.size()-1){
 
+      cout << "|";
+
+    }
   }
 
   cout << endl;
@@ -232,9 +229,9 @@ void addSubscriber(Platform &platform){
   do{
 
     cout << "Enter name: " << endl;
-    cin >> nameAux;
-    cin.get();
+    getline(cin,nameAux);
     nameOk = comprobarName(nameAux);
+    if(!nameOk){error(ERR_NAME);}
 
   }while(nameOk == false);
 
@@ -244,9 +241,9 @@ void addSubscriber(Platform &platform){
   do{
 
     cout << "Enter email: " << endl;
-    cin >> emailAux;
-    cin.get();
+    getline(cin,emailAux);
     emailOk = comprobarEmail(emailAux);
+    if(!emailOk){error(ERR_EMAIL);}
 
   } while(emailOk == false);
 
@@ -269,73 +266,46 @@ int comprobarId(int id, Platform plataforma){
     if((int)plataforma.subscribers[i].id == id){
       return i;
     }
-
   }
 
   return -1;
 
 }
 
-bool comprobarNum(int num[4]){
+bool comprobarNumIP(string numero){
 
-  for(int i = 0; i < 4; i++){
-    if(num[i] > 255 && num[i] < 0){
-      return false;
-    }
+  int num = stoi(numero);
+  
+  if(num > 255 || num < 0){
+    return false;
   }
   return true;
 }
 
-int comprobarStringNum(string num){
+bool comprobarStringNum(string num){
 
   if(num.size() != 1 && num[0] == '0'){
-    return 1;
+    return false;
   }
 
   for (char c : num) {
     if (!isdigit(c)) {
-      return 1;
+      return false;
     }
   }
 
-  return 0;
+  return true;
 
 }
 
 bool separarNumeroIP(string IP){
 
-  size_t pos = 0;
-  string delimiter = ".";
+  stringstream ss(IP);
   string token;
-  int ceroOk = 0, i = 0;
-  int coordP[4];
-  bool compNum = false;
-
-  while ((pos = (int)IP.find(delimiter)) != string::npos) {
-    token = IP.substr(0, pos);
-    ceroOk = comprobarStringNum(token);
-
-    if(ceroOk != 0){
+  while (getline(ss, token, '.')) {
+    if(!comprobarStringNum(token) || !comprobarNumIP(token)){
       return false;
     }
-
-    coordP[i] = stoi(token);
-    IP.erase(0, pos + delimiter.length());
-    i++;
-  }
-  
-  ceroOk = comprobarStringNum(token);
-
-  if(ceroOk != 0){
-    return false;
-  }
-
-  coordP[i] = std::stoi(IP);
-
-  compNum = comprobarNum(coordP);
-
-  if(!compNum){
-    return false;
   }
 
   return true;
@@ -368,73 +338,60 @@ bool comprobarIP(string IP){
 string calcularMain(vector<string> ips){
 
   if(1 == (int)ips.size()){
-
     return ips[0];
-
   }
 
-  vector<string> aux;
-  vector<int> frec;
+  int maxApariciones = 0;
 
-  aux.push_back(ips[0]);
-  frec.push_back(1);
+  string elementoMasComun;
 
-  for(int i = 0; i < (int)ips.size(); i++){
+  for (const string &elemento : ips) {
 
-    for(int j = 0; j < (int)aux.size(); j++){
+    int apariciones = 0;
 
-      if(ips[i] == aux[j]){
+    for (const string &otroElemento : ips) {
 
-        frec[i]++;
-
-      }else{
-
-        aux.push_back(ips[i]);
-        frec.push_back(1);
-
+      if (elemento == otroElemento) {
+        apariciones++;
       }
-      
-    }
-
-  }
-
-  int auxFrec = 0;
-  int pos;
-
-  for(int i = 0; i < (int)ips.size(); i++){
-
-    if(frec[i] > auxFrec){
-
-      auxFrec = frec[i];
-      pos = i;
 
     }
 
+    if (apariciones > maxApariciones) {
+      maxApariciones = apariciones;
+      elementoMasComun = elemento;
+    }
+    
   }
-
-  return ips[pos];
-
+  return elementoMasComun;
 }
 
 void addSubscriberIp(Platform &platform){
 
-  int auxId = -1;
+  int auxId = 0;
   string auxIP = "";
-  int idOk = 0;
+  int idOk = -1;
   bool ipOk = false;
+  string linea = "";
 
   cout << "Enter subscriber id: " << endl;
-  cin >> auxId;
-  idOk = comprobarId(auxId,platform);
+  getline(cin,linea);
 
-  if(idOk == -1){
+  stringstream ss(linea);
+
+  if((ss >> auxId)){
+    auxId = stoi(linea);
+    idOk = comprobarId(auxId,platform);
+  }
+
+  if(idOk == -1 || !comprobarStringNum(linea)){
     error(ERR_ID);
   }else{
 
     do{
 
       cout << "Enter IP:" << endl;
-      cin >> auxIP;
+      getline(cin,auxIP);
 
       ipOk = comprobarIP(auxIP);
 
@@ -447,8 +404,6 @@ void addSubscriberIp(Platform &platform){
     platform.subscribers[idOk].ips.push_back(auxIP);
 
     platform.subscribers[idOk].mainIp = calcularMain(platform.subscribers[idOk].ips);
-
-    cout << "MAIN: " << platform.subscribers[idOk].mainIp << endl;
 
   }
 }
@@ -469,32 +424,153 @@ void deleteSubscriber(Platform &platform){
   }else{
 
     for(int i = 0; i < (int)platform.subscribers.size(); i++){
-
       if(idOk == i){
-
         platform.subscribers.erase(platform.subscribers.begin()+i);
+      }
+    }
+  }
 
+}
+
+bool comprobarIps(string ips, Subscriber &suscriptor){
+
+  string token;
+  stringstream ss(ips);
+
+  while(getline(ss, token, '|')){
+
+    if(!comprobarIP(token)){return false;}
+    
+    suscriptor.ips.push_back(token);
+  }
+
+  return true;
+
+}
+
+void importFromCsv(Platform &platform, string nomFichero){
+
+  string token = "";
+
+  ifstream fich;
+  fich.open(nomFichero);
+  int i = 0;
+
+  if(fich.is_open()){
+
+    string linea;
+
+    while(getline(fich,linea)){
+
+      istringstream ss(linea);
+      vector<string> datos;
+      Subscriber suscriptor;
+
+      while (getline(ss, token, ':')) {
+        //cout << token << endl;
+        datos.push_back(token);
+        //Guardarlo en un vector, cada posicion del vector es un dato
       }
 
+      if(!comprobarEmail(datos[1]) && (int)datos.size() >= 2){
+        error(ERR_EMAIL);
+      }else if(!comprobarName(datos[0]) && (int)datos.size() >= 2){
+        error(ERR_NAME);
+      }else if((!comprobarIP(datos[2]) || !comprobarIps(datos[3],suscriptor)) && (int)datos.size() == 4){
+        error(ERR_IP);
+      }else{
+        platform.nextId++;
+
+        suscriptor.email = datos[1];
+        suscriptor.name = datos[0];
+        suscriptor.mainIp = datos[2];
+        suscriptor.id = platform.nextId;
+
+        platform.subscribers.push_back(suscriptor);
+      }
+      i++;
     }
+
+    fich.close();
+
+  }else{error(ERR_FILE);}
+}
+
+void exportToCsv(const Platform &platform, string nomFichero){
+
+  ofstream fich;
+
+  fich.open(nomFichero);
+
+  if(fich.is_open()){
+
+    for(int i = 0; i < (int)platform.subscribers.size(); i++){
+
+      fich << platform.subscribers[i].name << ":" << platform.subscribers[i].email << ":" << platform.subscribers[i].mainIp << ":";
+
+      for(int j = 0; j < (int)platform.subscribers[i].ips.size(); j++){
+
+        fich << platform.subscribers[i].ips[j];
+
+        if(j < (int)platform.subscribers[i].ips.size()-1){
+          fich << "|";
+        }
+      }
+
+      fich << endl;
+    }
+
+    fich.close();
+
+  }else{error(ERR_FILE);}
+  
+}
+
+void borrarPlataforma(Platform &platform){
+
+  platform.name = "";
+  platform.nextId = 0;
+  
+  for(int i = 0; i < (int)platform.subscribers.size(); i++){
+
+    platform.subscribers.erase(platform.subscribers.begin());
 
   }
 
 }
 
-void importFromCsv(Platform &platform)
-{
-  cout << "Import from csv" << endl;
-}
+void loadData(Platform &platform){
 
-void exportToCsv(const Platform &platform)
-{
-  cout << "Export from csv" << endl;
-}
+  string op = "";
+  string nomFich;
 
-void loadData(Platform &platform)
-{
-  cout << "Load data" << endl;
+  do{
+
+    cout << "All data will be erased. Continue? [y/n]:" << endl;
+    cin >> op;
+
+  }while(op != "y" && op != "Y" && op != "n" && op != "N");
+
+  if(op == "Y" || op == "y"){
+
+    borrarPlataforma(platform);
+    string plataforma;
+
+    cout << "Enter filename: " << endl;
+    cin >> nomFich;
+
+    ifstream fich;
+
+    fich.open(nomFich,ios::binary);
+
+    if(fich.is_open()){
+      //Investigar ficheros binarios
+    }else{error(ERR_FILE);}
+
+    fich.close();
+    
+  }
+  
 }
 
 void saveData(const Platform &platform)
@@ -517,6 +593,7 @@ void showImportMenu(){
 void importExportMenu(Platform &platform){
 
   char option;
+  string nomFichero;
   do
   {
     showImportMenu();
@@ -526,10 +603,14 @@ void importExportMenu(Platform &platform){
     switch (option)
     {
     case '1':
-      importFromCsv(platform);
+      cout << "Enter filename:" << endl;
+      getline(cin,nomFichero);
+      importFromCsv(platform,nomFichero);
       break;
     case '2':
-      exportToCsv(platform);
+      cout << "Enter filename:" << endl;
+      getline(cin,nomFichero);  
+      exportToCsv(platform,nomFichero);
       break;
     case '3':
       loadData(platform);
@@ -546,13 +627,59 @@ void importExportMenu(Platform &platform){
 
 }
 
+void argumentos(Platform &platform, int argc, char *argv[]){
+
+  if(argc == 3){
+
+    if(strcmp(argv[1], "-i") == 0){
+
+      importFromCsv(platform,argv[2]);
+
+    }else if(strcmp(argv[1], "-l") == 0){
+
+      cout << "Binario" << endl;
+
+    }else{error(ERR_ARGS);cout << "1" << endl;}
+
+  }else if(argc == 5){
+
+    if(strcmp(argv[1], "-i") == 0){
+
+      importFromCsv(platform,argv[2]);
+
+      if(strcmp(argv[3], "-i") == 0){
+
+        importFromCsv(platform,argv[4]);
+
+      }else if(strcmp(argv[1], "-l") == 0){
+
+        cout << "Binario" << endl;
+
+      }else{error(ERR_ARGS);cout << "2" << endl;}
+
+    }else if(strcmp(argv[1], "-l") == 0){
+
+      cout << "Binario" << endl;
+
+    }else{error(ERR_ARGS);cout << "3" << endl;}
+
+  }else{error(ERR_ARGS);cout << "4" << endl;}
+
+}
+
 int main(int argc, char *argv[])
 {
-
+  
   Platform platform;
   platform.name = "Streamflix";
   platform.nextId = 0;
 
+  if(argc > 1){
+
+    argumentos(platform,argc,argv);
+
+  }
+    
   char option;
   do
   {
