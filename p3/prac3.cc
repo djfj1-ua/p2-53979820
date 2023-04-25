@@ -11,8 +11,8 @@
 
 // test Coordinate methods
 
-void testCoordinate()
-{
+void testCoordinate(){
+
     Coordinate c;
     cout << c.getRow() << "," << c.getColumn() 
          << " : " << c.getStateChar() << endl;   // -1,-1 : N 
@@ -30,6 +30,11 @@ void testCoordinate()
     cout << c3.getRow() << "," << c3.getColumn() 
          << " : " << c3.getStateChar() << endl;  // 3,6 : N
     cout << "(" << c3 << ")" << endl;            // (D7)
+
+    Coordinate c4("B8");
+    cout << c4.getRow() << "," << c4.getColumn() 
+         << " : " << c4.getStateChar() << endl;
+    cout << "(" << c4 << ")" << endl; 
          
     // ... (you may add your own tests here)
     

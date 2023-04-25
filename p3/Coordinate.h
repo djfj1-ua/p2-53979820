@@ -8,7 +8,7 @@
 using namespace std;
 
 enum CellState{
-  NONE,SHIP,HIT,WATER
+    NONE,SHIP,HIT,WATER
 };
 
 enum Orientation{
@@ -28,16 +28,16 @@ class Coordinate{
     //Getters
     int getRow() const;
     int getColumn() const;
-    CellState getCellstate() const;
+    CellState getState() const;
+    char getStateChar() const;
 
     //Setters
     void setRow(int);
     void setColumn(int);
-    void setCellState(CellState);
+    void setState(CellState);
 
-    char getStateChar() const;
     bool compare(const Coordinate&) const;
-    Coordinate addOffset(int, const Orientation);
+    Coordinate addOffset(int, const Orientation) const;
     static Orientation orientationFromChar(char);
     friend ostream& operator << (ostream&, const Coordinate&); //Derechos de acceso
 
