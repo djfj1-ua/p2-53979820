@@ -20,7 +20,6 @@ class Coordinate{
         int row, column;
         CellState cellState; //Variables protected.
     public:
-        //aqui poner las funciones
         Coordinate(); //Constructor
         Coordinate(int,int);
         Coordinate(string);
