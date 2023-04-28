@@ -6,7 +6,6 @@ using namespace std;
 
 //Constructor vacío.
 Coordinate::Coordinate(){
-
  row = -1;
  column = -1;
  cellState = NONE;

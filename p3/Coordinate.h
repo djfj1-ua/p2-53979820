@@ -20,25 +20,27 @@ class Coordinate{
         int row, column;
         CellState cellState; //Variables protected.
     public:
-        Coordinate(); //Constructor
+        //Constructor
+        Coordinate(); 
         Coordinate(int,int);
         Coordinate(string);
 
-    //Getters
-    int getRow() const;
-    int getColumn() const;
-    CellState getState() const;
-    char getStateChar() const;
+        //Getters
+        int getRow() const;
+        int getColumn() const;
+        CellState getState() const;
+        char getStateChar() const;
 
-    //Setters
-    void setRow(int);
-    void setColumn(int);
-    void setState(CellState);
+        //Setters
+        void setRow(int);
+        void setColumn(int);
+        void setState(CellState);
 
-    bool compare(const Coordinate&) const;
-    Coordinate addOffset(int, const Orientation) const;
-    static Orientation orientationFromChar(char);
-    friend ostream& operator << (ostream&, const Coordinate&); //Derechos de acceso
+        //Funciones
+        bool compare(const Coordinate&) const;
+        Coordinate addOffset(int, const Orientation) const;
+        static Orientation orientationFromChar(char);
+        friend ostream& operator << (ostream&, const Coordinate&); //Derechos de acceso
 
 };
 

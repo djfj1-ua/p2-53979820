@@ -2,6 +2,7 @@
 //DNI: 53979820Q
 
 #include <iostream>
+#include <vector>
 
 #include "Util.h"
 
@@ -42,7 +43,7 @@ void testCoordinate(){
 
 // ----------------------------------------------------------------------------
 
-/*   // uncomment from this line to the next function to test Ship methods 
+   // uncomment from this line to the next function to test Ship methods 
    // (and uncomment the call to 'testShip' in the 'main' function)
 
 #include "Ship.h"
@@ -66,7 +67,7 @@ void testShip()
     ccru.push_back(pc1);
     
     Ship myCruise(CRUISE,ccru);
-    cout << myCruise ;          // CRUISE (O): D7S D8S
+    cout << myCruise;          // CRUISE (O): D7S D8S
     cout << coords[0] << endl;  // D7S
     cout << coords[1] << endl;  // D8S
     
@@ -82,8 +83,6 @@ void testShip()
         
     // ... (you may add your own tests here)
 }
-
-*/
 
 // ----------------------------------------------------------------------------
 
@@ -239,10 +238,8 @@ int main()
   testCoordinate();  
   
   // uncomment these lines to test Ship methods
-  /*
   cout << "-------------------- Ship tests -------------------------" << endl;
   testShip();     
-  */
 
   // uncomment this line to test Player methods
   /*
