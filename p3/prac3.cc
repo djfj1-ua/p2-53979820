@@ -32,10 +32,16 @@ void testCoordinate(){
          << " : " << c3.getStateChar() << endl;  // 3,6 : N
     cout << "(" << c3 << ")" << endl;            // (D7)
 
-    Coordinate c4("B8");
+    Coordinate c4("B5");
     cout << c4.getRow() << "," << c4.getColumn() 
          << " : " << c4.getStateChar() << endl;
-    cout << "(" << c4 << ")" << endl; 
+    cout << "(" << c4 << ")" << endl;
+
+    Coordinate c5 = c5.addOffset(2,SOUTH);
+    cout << c5.getRow() << "," << c5.getColumn() 
+         << " : " << c5.getStateChar() << endl;
+    cout << "(" << c5 << ")" << endl;  
+    cout << c5.getState();
          
     // ... (you may add your own tests here)
     
@@ -238,9 +244,9 @@ int main()
   testCoordinate();  
   
   // uncomment these lines to test Ship methods
-  cout << "-------------------- Ship tests -------------------------" << endl;
+  /*cout << "-------------------- Ship tests -------------------------" << endl;
   testShip();     
-
+  */
   // uncomment this line to test Player methods
   /*
   cout << "-------------------- Player tests -----------------------" << endl;

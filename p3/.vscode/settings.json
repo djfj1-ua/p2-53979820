@@ -8,6 +8,9 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "valarray": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "ostream": "cpp",
+        "random": "cpp",
+        "coordinate.h": "c"
     }
 }

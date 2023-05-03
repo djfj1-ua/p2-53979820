@@ -22,7 +22,7 @@ Ship::Ship(ShipType tipo, const vector <Coordinate*> &posiciones){
 
     if(!tamOk){throw EXCEPTION_WRONG_COORDINATES;}
 
-    for(int i = 0; i < posiciones.size(); i++){
+    for(int i = 0; i < (int)posiciones.size(); i++){
         posiciones[i]->setState(SHIP);
     }
 
@@ -54,7 +54,7 @@ ShipType Ship::typeFromChar(char type){
 
 Coordinate *Ship::getPosition(unsigned pos) const{
 
-    if(pos >= 0 && pos < positions.size()){
+    if(pos >= 0 && pos < (unsigned)positions.size()){
         return positions[pos];
     }else{
         return NULL;//Puede que de error, meterlo en una variable y devolver la variable
@@ -97,7 +97,7 @@ bool Ship::hit(const Coordinate &coord){
 
     bool allHit = false;
 
-    for(int i = 0; i < positions.size(); i++){
+    for(int i = 0; i < (int)positions.size(); i++){
 
         if((*positions[i]).compare(coord) == true){//Compruebo si la coordenada coincide
 
@@ -108,9 +108,9 @@ bool Ship::hit(const Coordinate &coord){
             }else{//Si no, estamos en una coordenada que se puede atacar
 
                 (*positions[i]).setState(HIT);//Cambiamos el estado a HIT
-                bool allHit = true;//Inicializamos allHit a true
+                allHit = true;//Inicializamos allHit a true
 
-                for(int j = 0; j < positions.size(); j++){//Recorremos todas las coordenadas del barco, si alguna no ha sido atacada el barco no se ha hundido
+                for(int j = 0; j < (int)positions.size(); j++){//Recorremos todas las coordenadas del barco, si alguna no ha sido atacada el barco no se ha hundido
                     if((*positions[j]).getState() == SHIP){
                         allHit = false;
                         break;
@@ -131,7 +131,7 @@ bool Ship::hit(const Coordinate &coord){
 
 ostream& operator<<(ostream &os, const Ship &ship) {
     os << ship.typeToString(ship.getType()) << " (" << ship.stateToString(ship.getState()) << "):";
-    for(unsigned i = 0; i < ship.positions.size(); i++) {
+    for(int i = 0; i < (int)ship.positions.size(); i++) {
         os << " " << *(ship.getPosition(i));
     }
     os << endl;

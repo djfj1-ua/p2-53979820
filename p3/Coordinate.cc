@@ -110,12 +110,16 @@ ostream &operator<<(ostream &os, const Coordinate &c){
 Coordinate Coordinate::addOffset(int offset, Orientation orientation) const{
 
     if(orientation == NORTH){
-        return Coordinate(this->row+offset,this->column);
+        Coordinate c(row-offset,column);
+        return c;
     }else if(orientation == EAST){
-        return Coordinate(this->row,this->column+offset);
+        Coordinate c(row,column-offset);
+        return c;
     }else if(orientation == SOUTH){
-        return Coordinate(this->row-offset,this->column);
+        Coordinate c(row+offset,column);
+        return c;
     }else{
-        return Coordinate(this->row,this->column-offset);
+        Coordinate c(row,column+offset);
+        return c;
     }
 }
