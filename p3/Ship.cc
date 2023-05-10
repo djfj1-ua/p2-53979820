@@ -71,7 +71,7 @@ string Ship::typeToString(ShipType type) const{
         case CRUISE:
             return "CRUISE";
         default:
-            return "SUBMARINE"; // Opcional: en caso de que se pase un valor inválido, se devuelve una cadena de caracteres que lo indique.
+            return "SUBMARINE"; 
     }
 }
 

@@ -92,14 +92,14 @@ void testShip()
 
 // ----------------------------------------------------------------------------
 
-/*   // uncomment from this line to the 'main' function to test Player methods 
+   // uncomment from this line to the 'main' function to test Player methods 
    // (and uncomment the call to 'testPlayer' in the 'main' function)
   
 #include "Player.h"
 
 // test Player methods
 
-
+/*
 // play the game asking for coordinates, changing the turn if the attacker fails
 void play(int &turn,Player &p1,Player &p2)
 {
@@ -153,7 +153,7 @@ void playInteractive(Player &player1,Player &player2)
 enum TestMode {
   INTERACTIVE_TEST,
   DIRECT_TEST
-};
+};*/
 
 void testPlayer()
 {
@@ -161,19 +161,19 @@ void testPlayer()
     Player player2("Dormilón");
 
     // First, place player's ships
-    cout << "Player " << player1.getName() << " placing ships..." << endl;
+    //cout << "Player " << player1.getName() << " placing ships..." << endl;
     try {
         Coordinate c(3,1);
         player1.addShip(c,DESTROYER,EAST);
 
-        string ships="B-B3-E S-J10-N   C-D7-W  D-A1-S";
-        player1.addShips(ships);
+        //string ships="B-B3-E S-J10-N   C-D7-W  D-A1-S";
+        //player1.addShips(ships);
     }
     catch (Exception e) {
         Util::error(ERR_SHIPS);
         Util::debug(e);
         return;
-    }
+    }/*
 
     cout << "Player " << player2.getName() << " placing ships..." << endl;
     try {
@@ -231,9 +231,8 @@ void testPlayer()
         cout << "================= End:" << endl 
              << player1 << player2 << endl;
       }
-    }
+    }*/
 }
-*/
 
 // ----------------------------------------------------------------------------
 
@@ -244,14 +243,12 @@ int main()
   testCoordinate();  
   
   // uncomment these lines to test Ship methods
-  /*cout << "-------------------- Ship tests -------------------------" << endl;
+  cout << "-------------------- Ship tests -------------------------" << endl;
   testShip();     
-  */
+
   // uncomment this line to test Player methods
-  /*
   cout << "-------------------- Player tests -----------------------" << endl;
   testPlayer();   
-  */
   
   return 0;
 }

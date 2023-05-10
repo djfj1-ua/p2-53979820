@@ -11,6 +11,8 @@
         "iosfwd": "cpp",
         "ostream": "cpp",
         "random": "cpp",
-        "coordinate.h": "c"
+        "coordinate.h": "c",
+        "util.h": "c",
+        "vector": "cpp"
     }
 }

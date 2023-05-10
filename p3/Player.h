@@ -3,20 +3,21 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 #include "Util.h"
 #include "Coordinate.h"
 #include "Ship.h"
 
 using namespace std;
 
-enum MaxShip{
-    1,2,3,4
-};
+const int BOARDSIZE = 10;
 
 class Player{
 
     protected:
         string name;
+        vector<Ship> ships;
+        Coordinate board[BOARDSIZE][BOARDSIZE];
     public:
         Player(string);
         
@@ -28,7 +29,7 @@ class Player{
         void addShips(string ships);
         bool attack(const Coordinate &coord);
         bool attack(string coord);
-        ostream& operator<<(ostream &os, const Player &player);
+        friend ostream& operator<<(ostream &os, const Player &player);
 
 };
 #endif
