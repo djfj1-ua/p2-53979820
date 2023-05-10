@@ -55,9 +55,11 @@ void Player::addShip(const Coordinate &pos, ShipType type, Orientation orientati
     posShip.push_back(&(board[pos.getRow()][pos.getColumn()]));
     
     for(int i = 0; i < tamShip[type]; i++){
-        pos.addOffset(1,orientation);
+        pos = pos.addOffset(1,orientation);
         posShip.push_back(&(board[pos.getRow()][pos.getColumn()]));
     }
+
+
 //Falta comprobar si las coordenadas del vector son correctas
 //Y crear el barco con ese vector de coordenadas
 }
