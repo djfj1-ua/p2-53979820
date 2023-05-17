@@ -113,13 +113,13 @@ Coordinate Coordinate::addOffset(int offset, Orientation orientation) const{
         Coordinate c(row-offset,column);
         return c;
     }else if(orientation == EAST){
-        Coordinate c(row,column-offset);
+        Coordinate c(row,column+offset);
         return c;
     }else if(orientation == SOUTH){
         Coordinate c(row+offset,column);
         return c;
     }else{
-        Coordinate c(row,column+offset);
+        Coordinate c(row,column-offset);
         return c;
     }
 }

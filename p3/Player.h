@@ -25,6 +25,7 @@ class Player{
         string getName() const;
 
         //Funciones
+        void comprobarPosTablero(const Coordinate aux);
         void addShip(const Coordinate &pos, ShipType type, Orientation orientation);
         void addShips(string ships);
         bool attack(const Coordinate &coord);

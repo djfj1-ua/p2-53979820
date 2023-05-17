@@ -159,15 +159,14 @@ void testPlayer()
 {
     Player player1("Mudito");
     Player player2("Dormilón");
-
     // First, place player's ships
-    //cout << "Player " << player1.getName() << " placing ships..." << endl;
+    cout << "Player " << player1.getName() << " placing ships..." << endl;
     try {
         Coordinate c(3,1);
         player1.addShip(c,DESTROYER,EAST);
 
-        //string ships="B-B3-E S-J10-N   C-D7-W  D-A1-S";
-        //player1.addShips(ships);
+        string ships="B-B3-E S-J10-N   C-D7-W  D-A1-S";
+        player1.addShips(ships);
     }
     catch (Exception e) {
         Util::error(ERR_SHIPS);
@@ -239,12 +238,12 @@ void testPlayer()
 
 int main()
 {
-  cout << "-------------------- Coordinate tests -------------------" << endl;
-  testCoordinate();  
+  /*cout << "-------------------- Coordinate tests -------------------" << endl;
+  testCoordinate();*/
   
   // uncomment these lines to test Ship methods
-  cout << "-------------------- Ship tests -------------------------" << endl;
-  testShip();     
+  /*cout << "-------------------- Ship tests -------------------------" << endl;
+  testShip();*/   
 
   // uncomment this line to test Player methods
   cout << "-------------------- Player tests -----------------------" << endl;
