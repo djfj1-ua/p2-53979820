@@ -13,6 +13,7 @@
         "random": "cpp",
         "coordinate.h": "c",
         "util.h": "c",
-        "vector": "cpp"
+        "vector": "cpp",
+        "iostream": "cpp"
     }
 }

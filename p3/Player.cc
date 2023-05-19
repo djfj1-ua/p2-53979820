@@ -82,10 +82,98 @@ void Player::addShips(string ships){
     string aux;
     //Ya esta separado por barco y todo, hay que hacer cosas con eso
     while(linea >> barco){
+
         stringstream temp(barco);
+        vector<string> datosBarco;
+
         while(getline(temp,aux,'-')){
-            cout << "Salida: " << aux << endl;
+            datosBarco.push_back(aux);
         }
-        cout << endl;
+        
+        ShipType tipo = Ship::typeFromChar(datosBarco[0][0]);
+        Orientation orientation = Coordinate::orientationFromChar(datosBarco[2][0]);
+        Coordinate coord(datosBarco[1]);
+
+        addShip(coord,tipo,orientation);
+
     }
+}
+
+bool Player::attack(const Coordinate &coord){
+
+    bool tocado;
+    int cont = 0;
+
+    for(int i = 0; i < (int)ships.size(); i++){
+        tocado = false;
+        try{
+            tocado = ships[i].hit(coord);
+        }catch (Exception e){
+            return false;
+        }
+
+        if(tocado==true){
+            
+            //Mirar esto, creo que no es necesario porque si tocado == true, no puede no ser DAMAGED
+            if(ships[i].getState() == DAMAGED){
+                return true;
+            }
+        }
+    }
+
+    for(int j = 0; j < (int)ships.size(); j++){
+        if(ships[j].getState() == SUNK){
+            cont++;
+        }
+    }
+
+    if(cont == (int)ships.size()){
+        throw EXCEPTION_GAME_OVER;
+    }
+
+    board[coord.getRow()][coord.getColumn()].setState(WATER);
+    return false;
+}
+
+bool Player::attack(string coord){
+
+    Coordinate coordenada(coord);
+    return attack(coordenada);
+
+}
+
+ostream& operator<<(ostream &os,const Player &player){
+
+    os << player.getName() << endl;
+    char letra = 'A';
+    for(int i = 0; i <= BOARDSIZE; i++){
+        if(i != 0){
+            os << letra;
+            letra++;
+        }
+        for(int j = 0; j <= BOARDSIZE; j++){
+            if(i == 0){
+                if(j == 0){
+                    os << " ";
+                }else{
+                    os << " " << j << " ";
+                }
+                
+            }else if(j > 0){
+                if(player.board[i-1][j-1].getStateChar() == 'N'){
+                    os << "   ";
+                }else{
+                    os << " " << player.board[i-1][j-1].getStateChar() << " ";
+                }
+            }
+    
+        }
+        os << endl;
+    }
+
+    for(int i = 0; i < (int)player.ships.size(); i++){
+        os << player.ships[i];
+    }
+
+    return os;
 }

@@ -37,11 +37,10 @@ void testCoordinate(){
          << " : " << c4.getStateChar() << endl;
     cout << "(" << c4 << ")" << endl;
 
-    Coordinate c5 = c5.addOffset(2,SOUTH);
+    Coordinate c5 = c4.addOffset(2,SOUTH);
     cout << c5.getRow() << "," << c5.getColumn() 
          << " : " << c5.getStateChar() << endl;
     cout << "(" << c5 << ")" << endl;  
-    cout << c5.getState();
          
     // ... (you may add your own tests here)
     
@@ -99,7 +98,6 @@ void testShip()
 
 // test Player methods
 
-/*
 // play the game asking for coordinates, changing the turn if the attacker fails
 void play(int &turn,Player &p1,Player &p2)
 {
@@ -147,13 +145,14 @@ void playInteractive(Player &player1,Player &player2)
         cout << "================= After game over:" << endl 
              << player1 << player2 << endl;
       }
+
     } while (!gameOver);
 }
 
 enum TestMode {
   INTERACTIVE_TEST,
   DIRECT_TEST
-};*/
+};
 
 void testPlayer()
 {
@@ -163,16 +162,17 @@ void testPlayer()
     cout << "Player " << player1.getName() << " placing ships..." << endl;
     try {
         Coordinate c(3,1);
-        player1.addShip(c,DESTROYER,EAST);
+        player1.addShip(c,SUBMARINE,EAST);
 
-        string ships="B-B3-E S-J10-N   C-D7-W  D-A1-S";
+        //string ships="B-B3-E S-J10-N   C-D7-W  D-A1-S";
+        string ships="S-B2-E  S-J3-S  S-E7-W";
         player1.addShips(ships);
     }
     catch (Exception e) {
         Util::error(ERR_SHIPS);
         Util::debug(e);
         return;
-    }/*
+    }
 
     cout << "Player " << player2.getName() << " placing ships..." << endl;
     try {
@@ -184,8 +184,10 @@ void testPlayer()
         Util::debug(e);
         return;
     }
+    cout << player1 << endl << endl;
+    cout << player2 << endl << endl;
 
-    TestMode testMode = DIRECT_TEST;  // you may change this to INTERACTIVE_TEST
+    TestMode testMode = INTERACTIVE_TEST;  // you may change this to INTERACTIVE_TEST
 
     if (testMode == INTERACTIVE_TEST)
     {
@@ -230,7 +232,7 @@ void testPlayer()
         cout << "================= End:" << endl 
              << player1 << player2 << endl;
       }
-    }*/
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -238,12 +240,12 @@ void testPlayer()
 
 int main()
 {
-  /*cout << "-------------------- Coordinate tests -------------------" << endl;
-  testCoordinate();*/
+  cout << "-------------------- Coordinate tests -------------------" << endl;
+  testCoordinate();
   
   // uncomment these lines to test Ship methods
-  /*cout << "-------------------- Ship tests -------------------------" << endl;
-  testShip();*/   
+  cout << "-------------------- Ship tests -------------------------" << endl;
+  testShip();  
 
   // uncomment this line to test Player methods
   cout << "-------------------- Player tests -----------------------" << endl;
