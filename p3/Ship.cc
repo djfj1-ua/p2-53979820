@@ -101,16 +101,18 @@ bool Ship::hit(const Coordinate &coord){
 
         if((*positions[i]).compare(coord) == true){//Compruebo si la coordenada coincide
 
-            if((*positions[i]).getState() == HIT){//Si ya ha sido atacada salta excepcion
-                throw EXCEPTION_ALREADY_HIT;
-            }else if(state == SUNK){//Si se ha hundido el barco salta excepcion
+            if(state == SUNK){//Si ya ha sido atacada salta excepcion
+                cout << "Ya ha sido hundido." << endl;
                 throw EXCEPTION_ALREADY_SUNK;
+            }else if((*positions[i]).getState() == HIT){//Si se ha hundido el barco salta excepcion
+                cout << "La posicion ya se ha tocado." << endl;
+                throw EXCEPTION_ALREADY_HIT;
             }else{//Si no, estamos en una coordenada que se puede atacar
-
                 (*positions[i]).setState(HIT);//Cambiamos el estado a HIT
                 allHit = true;//Inicializamos allHit a true
 
                 for(int j = 0; j < (int)positions.size(); j++){//Recorremos todas las coordenadas del barco, si alguna no ha sido atacada el barco no se ha hundido
+                    cout << (*positions[i]).getStateChar() << endl;
                     if((*positions[j]).getState() == SHIP){
                         allHit = false;
                         break;

@@ -51,7 +51,7 @@ void Player::addShip(const Coordinate &pos, ShipType type, Orientation orientati
     //Compruebo que la partida no ha empezado todavía
     for(int i = 0; i < 10; i++){
         for(int j = 0; j < 10; j++){
-            if(board[i][j].getState() != NONE && board[i][j].getState() != SHIP){
+            if(board[i][j].getState() == HIT || board[i][j].getState() == WATER){
                 throw EXCEPTION_GAME_STARTED;
             }
         }
@@ -102,13 +102,14 @@ void Player::addShips(string ships){
 bool Player::attack(const Coordinate &coord){
 
     bool tocado;
-    int cont = 0;
+    int cont = 0, i = 0;
 
-    for(int i = 0; i < (int)ships.size(); i++){
+    for(i = 0; i < (int)ships.size(); i++){
         tocado = false;
         try{
             tocado = ships[i].hit(coord);
         }catch (Exception e){
+            Util::debug(e);
             return false;
         }
 
@@ -118,6 +119,7 @@ bool Player::attack(const Coordinate &coord){
             if(ships[i].getState() == DAMAGED){
                 return true;
             }
+            break;
         }
     }
 
@@ -129,6 +131,8 @@ bool Player::attack(const Coordinate &coord){
 
     if(cont == (int)ships.size()){
         throw EXCEPTION_GAME_OVER;
+    }else if(tocado == true && ships[i].getState() == SUNK){
+        return true;
     }
 
     board[coord.getRow()][coord.getColumn()].setState(WATER);
