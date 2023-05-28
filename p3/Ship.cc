@@ -57,7 +57,7 @@ Coordinate *Ship::getPosition(unsigned pos) const{
     if(pos >= 0 && pos < (unsigned)positions.size()){
         return positions[pos];
     }else{
-        return NULL;//Puede que de error, meterlo en una variable y devolver la variable
+        return NULL;
     }
 }
 
@@ -101,34 +101,31 @@ bool Ship::hit(const Coordinate &coord){
 
         if((*positions[i]).compare(coord) == true){//Compruebo si la coordenada coincide
 
-            if(state == SUNK){//Si ya ha sido atacada salta excepcion
-                cout << "Ya ha sido hundido." << endl;
+            if(state == SUNK){//Si ya se ha hundido el barco salta una excepción
                 throw EXCEPTION_ALREADY_SUNK;
-            }else if((*positions[i]).getState() == HIT){//Si se ha hundido el barco salta excepcion
-                cout << "La posicion ya se ha tocado." << endl;
+            }else if((*positions[i]).getState() == HIT){//Si es posición del barco ya ha sido atacada salta una excepción
                 throw EXCEPTION_ALREADY_HIT;
-            }else{//Si no, estamos en una coordenada que se puede atacar
-                (*positions[i]).setState(HIT);//Cambiamos el estado a HIT
-                allHit = true;//Inicializamos allHit a true
+            }else{//Si no, estamos en una coordenada que se puede atacar.
+                (*positions[i]).setState(HIT);//Cambiamos el estado a HIT.
+                allHit = true;//Inicializamos allHit a true.
 
-                for(int j = 0; j < (int)positions.size(); j++){//Recorremos todas las coordenadas del barco, si alguna no ha sido atacada el barco no se ha hundido
-                    cout << (*positions[i]).getStateChar() << endl;
+                for(int j = 0; j < (int)positions.size(); j++){//Recorremos todas las coordenadas del barco, si alguna no ha sido atacada el barco no se ha hundido.
                     if((*positions[j]).getState() == SHIP){
                         allHit = false;
                         break;
                     }
                 }
 
-                if(allHit){//Si todas las coordenadas del barco han sido atacadas
-                    state = SUNK;//Cambiamos el estado a SUNK
+                if(allHit){//Si todas las coordenadas del barco han sido atacadas.
+                    state = SUNK;//Cambiamos el estado a SUNK.
                 }else{
-                    state = DAMAGED;//Si no, cambiamos el estado del barco a DAMAGED
+                    state = DAMAGED;//Si no, cambiamos el estado del barco a DAMAGED.
                 }
-                return true;//Devolvemos true si se ha completado el ataque
+                return true;//Devolvemos true si se ha completado el ataque.
             }
         }
     }
-    return false;//Devolvemos false si no se ha podido llevar a cabo el ataque
+    return false;//Devolvemos false si no se ha podido llevar a cabo el ataque.
 }
 
 ostream& operator<<(ostream &os, const Ship &ship) {

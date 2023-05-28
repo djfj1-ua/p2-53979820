@@ -106,7 +106,7 @@ ostream &operator<<(ostream &os, const Coordinate &c){
 }
 
 //Método que devuelve una coordenada que es resultado de sumar 
-//a la coordanada (this) un número offset posiciones en la orientacion indicada
+//a la coordanada this un número offset posiciones en la orientacion indicada.
 Coordinate Coordinate::addOffset(int offset, Orientation orientation) const{
 
     if(orientation == NORTH){
